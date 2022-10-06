@@ -111,6 +111,7 @@ BigInteger::BigInteger() {
 	/* Should be implemented */
 	// just initialize
 	initialize_properties();
+	this->value_string[0] = '0';
 }
 
 BigInteger::BigInteger(int value) {
@@ -129,7 +130,6 @@ BigInteger::BigInteger(int value) {
 
 	// get number length
 	int tmp_length = get_number_length(value);
-	cout << "tmp_length" << tmp_length;
 
 	while (tmp_length >= this->capacity) {
 		doubling_capacity();
@@ -193,7 +193,12 @@ BigInteger::BigInteger(long long value) {
 BigInteger::BigInteger(std::string value) {
 	/* Should be implemented */
 	initialize_properties();
-	
+
+	if (value[0] == '-') {
+		this->sign = false;
+		value = value.substr(1);
+	}
+
 	int tmp_length = value.size();
 	
 	while (tmp_length >= this->capacity) {
