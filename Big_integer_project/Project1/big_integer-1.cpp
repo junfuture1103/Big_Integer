@@ -457,7 +457,220 @@ BigInteger BigInteger::operator + (const BigInteger& big_integer) const {
 BigInteger BigInteger::operator - (const BigInteger& big_integer) const {
 	/* Should be implemented */
 	BigInteger result;
+	result.initialize_properties();
 
+	//this->value_string + big_integer.value_string
+	char* num1 = this->value_string;
+	char* num2 = big_integer.value_string;
+
+	int num1_size = this->length;
+	int num2_size = big_integer.length;
+
+	int max;
+	int tmp_length = 0;
+
+	// + + 라고 가정
+	if (BigInteger(*this) >= BigInteger(big_integer)) {
+		max = num1_size;
+
+		if (this->sign == true) {
+			result.sign = true;
+		}
+		else {
+			result.sign = false;
+		}
+		//result.sign = this->sign;
+
+		int num1_index = num1_size - 1;
+		int num2_index = num2_size - 1;
+
+		int tmp_result;
+		int carry_flag = 0;
+		int carry_value = 1;
+
+		tmp_length = max;
+
+		while (tmp_length >= result.capacity) {
+			result.doubling_capacity();
+		}
+
+		int index = 0;
+
+		while (num1_index >= 0 || num2_index >= 0) {
+			int n1, n2;
+
+			n1 = num1[num1_index] - '0';
+			n2 = num2[num2_index] - '0';
+
+			// num1 is min
+			if (num1_index < 0 && num2_index >= 0) {
+				while (num2_index >= 0) {
+					if (carry_flag) {
+						tmp_result = n1 - n2 - 1;
+						n1 = 0;
+						carry_flag = 0;
+					}
+					else {
+						tmp_result = n2;
+					}
+
+					result.value_string[index] = tmp_result + '0';
+					index++;
+
+					num2_index--;
+					n2 = num2[num2_index] - '0';
+				}
+			}
+			// num2 is min
+			else if (num2_index < 0 && num1_index >= 0) {
+				while (num1_index >= 0) {
+					if (carry_flag) {
+						tmp_result = n1 - n2 - 1;
+						n2 = 0;
+						carry_flag = 0;
+					}
+					else {
+						tmp_result = n1;
+					}
+
+					result.value_string[index] = tmp_result + '0';
+					index++;
+
+					num1_index--;
+					n1 = num1[num1_index] - '0';
+				}
+			}
+			else {
+				if (carry_flag) {
+					tmp_result = n1 - n2 - 1;
+					carry_flag = 0;
+				}
+				else {
+					tmp_result = n1 - n2;
+				}
+
+				result.value_string[index] = tmp_result + '0';
+				index++;
+
+				num1_index--;
+				num2_index--;
+			}
+		}
+
+		result.sign = true;
+	}
+	else {
+		max = num2_size;
+
+		num2 = this->value_string;
+		num1 = big_integer.value_string;
+
+		num2_size = this->length;
+		num1_size = big_integer.length;
+
+		if (big_integer.sign == true) {
+			result.sign = true;
+		}
+		else {
+			result.sign = false;
+		}
+		//result.sign = this->sign;
+
+		int num1_index = num1_size - 1;
+		int num2_index = num2_size - 1;
+
+		int tmp_result;
+		int carry_flag = 0;
+		int carry_value = 1;
+
+		int tmp_length = max;
+
+		while (tmp_length >= result.capacity) {
+			result.doubling_capacity();
+		}
+
+		int index = 0;
+
+		while (num1_index >= 0 || num2_index >= 0) {
+			int n1, n2;
+
+			n1 = num1[num1_index] - '0';
+			n2 = num2[num2_index] - '0';
+
+			// num1 is min
+			if (num1_index < 0 && num2_index >= 0) {
+				while (num2_index >= 0) {
+					if (carry_flag) {
+						tmp_result = n1 - n2 - 1;
+						n1 = 0;
+						carry_flag = 0;
+					}
+					else {
+						tmp_result = n2;
+					}
+
+					result.value_string[index] = tmp_result + '0';
+					index++;
+
+					num2_index--;
+					n2 = num2[num2_index] - '0';
+				}
+			}
+			// num2 is min
+			else if (num2_index < 0 && num1_index >= 0) {
+				while (num1_index >= 0) {
+					if (carry_flag) {
+						tmp_result = n1 - n2 - 1;
+						n2 = 0;
+						carry_flag = 0;
+					}
+					else {
+						tmp_result = n1;
+					}
+
+					result.value_string[index] = tmp_result + '0';
+					index++;
+
+					num1_index--;
+					n1 = num1[num1_index] - '0';
+				}
+			}
+			else {
+				if (carry_flag) {
+					tmp_result = n1 - n2 - 1;
+					carry_flag = 0;
+				}
+				else {
+					tmp_result = n1 - n2;
+				}
+
+				result.value_string[index] = tmp_result + '0';
+				index++;
+
+				num1_index--;
+				num2_index--;
+			}
+		}
+
+		result.sign = false;
+	}
+
+	result.length = max;
+
+	// remove 0
+	if (result.value_string[result.length - 1] == '0') {
+		for (int i = 0; i < result.length; i++) {
+			if (result.value_string[result.length - 1 - i] == '0') {
+				result.value_string[result.length - 1 - i] = '\0';
+			}
+			else {
+				result.length -= i;
+				break;
+			}
+		}
+	}
+
+	result.reverse_string(result.value_string);
 	return result;
 }
 
