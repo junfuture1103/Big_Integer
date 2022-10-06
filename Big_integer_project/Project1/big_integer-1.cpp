@@ -40,6 +40,47 @@ void BigInteger::print_BI() {
 	cout << "string : " << this->value_string << "\n" << endl;
 }
 
+
+int BigInteger::get_number_length(int number) {
+	int tmp = number;
+	int length = 1;
+
+	// if negative?
+
+	while (tmp >= 10) {
+		tmp = tmp / 10;
+		length++;
+	}
+
+	return length;
+}
+int BigInteger::get_number_length(long long number) {
+	long long tmp = number;
+	int length = 1;
+
+	// if negative?
+
+	while (tmp >= 10) {
+		tmp = tmp / 10;
+		length++;
+	}
+
+	return length;
+}
+
+void BigInteger::reverse_string(char* arr) {
+
+	char* tmp_arr = new char[this->capacity] ();
+
+	// arr -> 0987654321
+	int last_index = this->length - 1;
+	for (int i = 0; i < this->length; i++) {
+		tmp_arr[i] = arr[last_index-i];
+	}
+
+	this->value_string= tmp_arr;
+}
+
 BigInteger::COMPARE_RESULT BigInteger::compare_absolute_value(const BigInteger& big_integer) const {
 	int start_index = 0;
 
@@ -75,22 +116,78 @@ BigInteger::BigInteger() {
 BigInteger::BigInteger(int value) {
 	/* Should be implemented */
 	initialize_properties();
-	/*
-	int value_length = 1;
-	int divid = value / 10;
-	int remind = value % 10;
+	
+	// neg_flag == 1 means negative number
+	//int neg_flag = 0;
 
-	while (divid > 10) {
-		this->value_string[0] =  + '0';
+	// negative number processing
+	if (value < 0) {
+		//neg_flag = 1;
+		this->sign = false;
+		value = value * -1;
 	}
-	*/
-	//this->value_string[0] = tmp + '0';
+
+	// get number length
+	int tmp_length = get_number_length(value);
+	cout << "tmp_length" << tmp_length;
+
+	while (tmp_length >= this->capacity) {
+		doubling_capacity();
+	}
+
+	this->length = tmp_length;
+
+	int tmp_num = value;
+	char now_num = 0;
+
+	for (int i = 0; i < this->length; i++) {
+		now_num = tmp_num % 10;
+		tmp_num = tmp_num / 10;
+
+		this->value_string[i] = now_num + '0';
+	}
+
+	// reverse
+	reverse_string(this->value_string);
 
 }
 
 BigInteger::BigInteger(long long value) {
 	/* Should be implemented */
 	initialize_properties();
+
+	// neg_flag == 1 means negative number
+	//int neg_flag = 0;
+
+	// negative number processing
+	if (value < 0) {
+		//neg_flag = 1;
+		this->sign = false;
+		value = value * -1;
+	}
+
+	// get number length
+	int tmp_length = get_number_length(value);
+	cout << "tmp_length" << tmp_length;
+
+	while (tmp_length >= this->capacity) {
+		doubling_capacity();
+	}
+
+	this->length = tmp_length;
+
+	long long tmp_num = value;
+	char now_num = 0;
+
+	for (int i = 0; i < this->length; i++) {
+		now_num = tmp_num % 10;
+		tmp_num = tmp_num / 10;
+
+		this->value_string[i] = now_num + '0';
+	}
+
+	// reverse
+	reverse_string(this->value_string);
 }
 
 BigInteger::BigInteger(std::string value) {

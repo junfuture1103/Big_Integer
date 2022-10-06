@@ -22,6 +22,9 @@ private:
 	// Method
 	void initialize_properties();
 	void doubling_capacity();
+	int get_number_length(int number);
+	int get_number_length(long long number);
+	void reverse_string(char* arr);
 	void print_BI();
 
 	enum COMPARE_RESULT {
