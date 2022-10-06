@@ -168,7 +168,6 @@ BigInteger::BigInteger(long long value) {
 
 	// get number length
 	int tmp_length = get_number_length(value);
-	cout << "tmp_length" << tmp_length;
 
 	while (tmp_length >= this->capacity) {
 		doubling_capacity();
@@ -337,6 +336,120 @@ bool BigInteger::operator <= (const BigInteger& big_integer) const {
 BigInteger BigInteger::operator + (const BigInteger& big_integer) const {
 	/* Should be implemented */
 	BigInteger result;
+	result.initialize_properties();
+
+	// + + 라고 가정
+	if (this->sign == big_integer.sign) {
+		result.sign = this->sign;
+
+		//this->value_string + big_integer.value_string
+		char* num1 = this->value_string;
+		char* num2 = big_integer.value_string;
+
+		int num1_size = this->length;
+		int num2_size = big_integer.length;
+
+		int max;
+		if (num1_size > num2_size) {
+			max = num1_size;
+		}
+		else {
+			max = num2_size;
+		}
+
+		int num1_index = num1_size - 1;
+		int num2_index = num2_size - 1;
+
+		int tmp_result;
+		int carry_flag = 0;
+		int carry_value = 1;
+
+		int tmp_length = max;
+
+		while (max + 1 >= result.capacity) {
+			result.doubling_capacity();
+		}
+
+		int index = 0;
+
+		while (num1_index >= 0 || num2_index >= 0) {
+			int n1, n2;
+
+			n1 = num1[num1_index] - '0';
+			n2 = num2[num2_index] - '0';
+
+			// num1 is min
+			if (num1_index < 0 && num2_index >= 0) {
+				while (num2_index >= 0) {
+					if (carry_flag) {
+						tmp_result = carry_value + n1 + n2;
+						n1 = 0;
+						carry_flag = 0;
+					}
+					else {
+						tmp_result = n2;
+					}
+
+					if (tmp_result >= 10) carry_flag = 1;
+
+					result.value_string[index] = tmp_result % 10 + '0';
+					index++;
+
+					num2_index--;
+					n2 = num2[num2_index] - '0';
+				}
+			}
+			// num2 is min
+			else if (num2_index < 0 && num1_index >= 0) {
+				while (num1_index >= 0) {
+					if (carry_flag) {
+						tmp_result = carry_value + n1 + n2;
+						n2 = 0;
+						carry_flag = 0;
+					}
+					else {
+						tmp_result = n1;
+					}
+
+					if (tmp_result >= 10) carry_flag = 1;
+
+					result.value_string[index] = tmp_result % 10 + '0';
+					index++;
+
+					num1_index--;
+					n1 = num1[num1_index] - '0';
+				}
+			}
+			else {
+				if (carry_flag) {
+					tmp_result = carry_value + n1 + n2;
+					carry_flag = 0;
+				}
+				else {
+					tmp_result = n1 + n2;
+				}
+
+				if (tmp_result >= 10) carry_flag = 1;
+
+				result.value_string[index] = tmp_result % 10 + '0';
+				index++;
+
+				num1_index--;
+				num2_index--;
+			}
+		}
+
+		if (carry_flag) {
+			result.value_string[index] = '1';
+
+			result.length = tmp_length + 1;
+		}
+		else {
+
+			result.length = tmp_length;
+		}
+		result.reverse_string(result.value_string);
+	}
 
 	return result;
 }
